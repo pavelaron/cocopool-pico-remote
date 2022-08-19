@@ -1,0 +1,6 @@
+{
+  "wlan": {
+      "ssid": "<WLAN_SSID>",
+      "password": "<WLAN_PWD>"
+  }
+}
