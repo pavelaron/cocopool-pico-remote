@@ -3,6 +3,12 @@
 <head>
   <title>Cocopool Remote</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Cocopool">
+
+  <link rel="shortcut icon" type="image/png" href="/static/icon.png">
+  <link rel="apple-touch-icon" href="/static/icon.png">
   <style>
     body, html {
       background-color: #ebecf0;
@@ -88,13 +94,13 @@
 <body>
   <div>
     <div class="container-buttons">
-      <button class="button" name="UP">
+      <button class="button" name="up">
         <div class="arrow arrow-up"></div>
       </button>
-      <button class="button" name="STOP">
+      <button class="button" name="stop">
         <div class="arrow arrow-stop"></div>
       </button>
-      <button class="button" name="DOWN">
+      <button class="button" name="down">
         <div class="arrow arrow-down"></div>
       </button>
     </div>
@@ -108,7 +114,7 @@
           var name = e.currentTarget.name;
           var http = new XMLHttpRequest();
 
-          http.open('HEAD', './?TOP=' + name);
+          http.open('HEAD', '/button/' + name);
           http.send();
         });
       }

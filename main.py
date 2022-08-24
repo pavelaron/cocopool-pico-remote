@@ -1,8 +1,8 @@
 import network
-import socket
 import time
 import json
 from machine import Pin
+from microdot import Microdot, send_file
 
 config_file = open('config.json')
 config = json.loads(config_file.read())
@@ -21,18 +21,6 @@ wlan.active(True)
 wlan.config(pm = 0xa11140)
 wlan.connect(ssid, password)
 
-htmlFile = open('index.html', 'r')
-html = htmlFile.read()
-
-def button_press(button_key, cl):
-    cl.send('HTTP/1.0 200 OK\r\n\r\n')
-    cl.close()
-
-    button = buttons[button_key]
-    button.value(1)
-    time.sleep(0.25)
-    button.value(0)
-
 max_wait = 10
 while max_wait > 0:
     if wlan.status() < 0 or wlan.status() >= 3:
@@ -48,35 +36,27 @@ else:
     status = wlan.ifconfig()
     print( 'ip = ' + status[0] )
 
-addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+def button_press(button_key):
+    button = buttons[button_key]
+    button.value(1)
+    time.sleep(0.25)
+    button.value(0)
 
-s = socket.socket()
-s.bind(addr)
-s.listen(1)
+app = Microdot()
 
-print('listening on', addr)
+@app.route('/')
+def index(request):
+    return send_file('index.html')
 
-# Listen for connections
-while True:
-    try:
-        cl, addr = s.accept()
-        print('client connected from', addr)
-        request = cl.recv(1024)
-        print(request)
+@app.route('/static/<path:path>')
+def static(request, path):
+    if '..' in path:
+        return 'Not found', 404
+    return send_file('static/' + path)
 
-        query = str(request).splitlines()[0]
+@app.route('/button/<direction>', methods=['HEAD'])
+def handle(request, direction):
+    button_press(direction)
+    return '', 200
 
-        if query.find('TOP=UP') != -1:
-            button_press('up', cl)
-        elif query.find('TOP=STOP') != -1:
-            button_press('stop', cl)
-        elif query.find('TOP=DOWN') != -1:
-            button_press('down', cl)
-        else:
-            cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
-            cl.send(html)
-            cl.close()
-
-    except OSError as e:
-        cl.close()
-        print('connection closed')
+app.run(host='0.0.0.0', port=80)
