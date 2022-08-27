@@ -39,7 +39,7 @@ else:
 def button_press(button_key):
     button = buttons[button_key]
     button.value(1)
-    time.sleep(0.25)
+    time.sleep(1)
     button.value(0)
 
 app = Microdot()
