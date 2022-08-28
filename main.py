@@ -1,8 +1,9 @@
 import network
 import time
 import json
+import uasyncio
 from machine import Pin
-from microdot import Microdot, send_file
+from microdot_asyncio import Microdot, send_file
 
 config_file = open('config.json')
 config = json.loads(config_file.read())
@@ -34,29 +35,37 @@ if wlan.status() != 3:
 else:
     print('connected')
     status = wlan.ifconfig()
-    print( 'ip = ' + status[0] )
+    print('ip = ' + status[0])
 
-def button_press(button_key):
+async def button_press(button_key):
     button = buttons[button_key]
     button.value(1)
-    time.sleep(1)
+    await uasyncio.sleep_ms(1000)
     button.value(0)
 
 app = Microdot()
 
 @app.route('/')
-def index(request):
+async def index(request):
     return send_file('index.html')
 
 @app.route('/static/<path:path>')
-def static(request, path):
+async def static(request, path):
     if '..' in path:
         return 'Not found', 404
     return send_file('static/' + path)
 
 @app.route('/button/<direction>', methods=['HEAD'])
-def handle(request, direction):
-    button_press(direction)
+async def handle(request, direction):
+    await button_press(direction)
     return '', 200
 
-app.run(host='0.0.0.0', port=80)
+def start_server():
+    try:
+        app.run(host='0.0.0.0', port=80)
+    except:
+        app.shutdown()
+        time.sleep(5)
+        start_server()
+
+start_server()
