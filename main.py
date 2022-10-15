@@ -1,7 +1,8 @@
 import network
-import time
 import json
-from machine import Pin
+import gc
+import utime as time
+from machine import Pin, Timer
 from microdot import Microdot, send_file
 
 config_file = open('config.json')
@@ -21,11 +22,9 @@ wlan.active(True)
 wlan.config(pm = 0xa11140)
 wlan.connect(ssid, password)
 
-max_wait = 10
-while max_wait > 0:
+for i in range(10):
     if wlan.status() < 0 or wlan.status() >= 3:
         break
-    max_wait -= 1
     print('waiting for connection...')
     time.sleep(1)
 
@@ -39,8 +38,11 @@ else:
 def button_press(button_key):
     button = buttons[button_key]
     button.value(1)
-    time.sleep(1)
-    button.value(0)
+    timer = Timer(-1)
+    timer.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:button.value(0))
+
+gc.enable()
+gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
 
 app = Microdot()
 
@@ -59,12 +61,20 @@ def handle(request, direction):
     button_press(direction)
     return '', 200
 
+@app.errorhandler(RuntimeError)
+def runtime_error(request, exception):
+    restart()
+
+def restart():
+    gc.collect()
+    app.shutdown()
+    time.sleep(5)
+    start_server()
+
 def start_server():
     try:
         app.run(host='0.0.0.0', port=80)
     except:
-        app.shutdown()
-        time.sleep(5)
-        start_server()
+        restart()
 
 start_server()
