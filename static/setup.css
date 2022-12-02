@@ -33,8 +33,15 @@ body, html {
   outline: 0;
   font-size: 16px;
   border-radius: 30px;
-  box-shadow: -5px -5px 20px white, 5px 5px 20px #babecc;
   transition: all 0.2s ease-in-out;
+}
+
+.container-form .input-text {
+  box-shadow: inset -5px -5px 10px white, inset 5px 5px 10px #babecc;
+}
+
+.container-form .input-submit {
+  box-shadow: -5px -5px 20px white, 5px 5px 20px #babecc;
 }
 
 .setup-hidden {
