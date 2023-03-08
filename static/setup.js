@@ -11,7 +11,7 @@
     var http = new XMLHttpRequest();
 
     http.open('POST', '/save-ssid', true);
-    http.setRequestHeader("Content-Type", "application/json");
+    http.setRequestHeader('Content-Type', 'application/json');
     http.onload = function(progress) {
       message.innerText = http.status === 200
         ? 'SSID has been saved! Please reboot your device for changes to take effect.'
