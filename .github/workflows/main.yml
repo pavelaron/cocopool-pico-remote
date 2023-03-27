@@ -10,22 +10,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - id: dir2uf2
-        uses: robinraju/release-downloader@v1.7
+      - id: build
+        uses: actions/dir2uf2-action@main
         with:
-          repository: 'Gadgetoid/dir2uf2'
-          latest: true
-          zipBall: true
-      - name: Unzip dir2uf2
-        uses: montudor/action-zip@v1
-        with:
-          args: unzip dir2uf2-${{ steps.dir2uf2.outputs.tag_name }}.zip -d dir2uf2
-      - name: Build .uf2 file
-        run: |
-          pip install littlefs-python
-          dir2uf2/$(ls dir2uf2 | grep "^Gadgetoid-dir2uf2-")/dir2uf2 --filename cocopool.uf2 --manifest enviro.txt .
+          environment-file: 'enviro.txt'
+          file-name: 'cocopool'
+          src-dir: '.'
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:
           name: cocopool
-          path: cocopool.uf2
+          path: ${{ steps.build.outputs.uf2-file }}
