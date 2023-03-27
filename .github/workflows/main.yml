@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
       - id: build
-        uses: actions/dir2uf2-action@main
+        uses: pavelaron/dir2uf2-action@main
         with:
           environment-file: 'enviro.txt'
           file-name: 'cocopool'
