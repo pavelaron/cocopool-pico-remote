@@ -1,17 +1,18 @@
 import network
 import gc
-import pickle
 import utime as time
+import ujson as json
+import ubinascii as binascii
 from machine import Pin, Timer
 from microdot import Microdot, send_file
 
-cache_filename = 'cache.dat'
+cache_filename = 'cache.json'
 wlan_connection = network.STA_IF
 
 buttons = {
-    'up': Pin(18, Pin.OUT),
-    'stop': Pin(19, Pin.OUT),
-    'down': Pin(20, Pin.OUT)
+    'up'   : Pin(18, Pin.OUT),
+    'stop' : Pin(19, Pin.OUT),
+    'down' : Pin(20, Pin.OUT)
 }
 
 def button_press(button_key):
@@ -42,9 +43,10 @@ def connect_sta(ssid, password):
 def init_ap():
     global wlan_connection
     wlan_connection = network.AP_IF
+    ssid = 'Cocopool-' + binascii.hexlify(machine.unique_id()).decode()
     
     ap = network.WLAN(wlan_connection)
-    ap.config(essid='Cocopool', password='123456789')
+    ap.config(essid=ssid, password='123456789')
     ap.active(True)
     
     print('Access point active')
@@ -63,8 +65,9 @@ def start_server():
         restart()
 
 try:
-    with open(cache_filename, 'rb') as cache:
-        data = pickle.load(cache)
+    with open(cache_filename, 'r') as cache:
+        data = json.load(cache)
+        cache.close()
     
     ssid = data['ssid']
     password = data['password']
@@ -92,8 +95,9 @@ def setup(request):
     if 'ssid' not in keys or 'password' not in keys:
         return 'bad request', 400
     
-    with open(cache_filename, 'wb') as cache:
-        pickle.dump(body, cache)
+    with open(cache_filename, 'w') as cache:
+        cache.write(json.dumps(body))
+        cache.close()
     
     return '', 200
 

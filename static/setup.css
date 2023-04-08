@@ -44,6 +44,10 @@ body, html {
   box-shadow: -5px -5px 20px white, 5px 5px 20px #babecc;
 }
 
-.setup-hidden {
+.setup-message {
+  text-align: center;
+}
+
+.setup-message.setup-hidden {
   display: none;
 }
