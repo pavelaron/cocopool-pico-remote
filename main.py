@@ -1,4 +1,5 @@
 import network
+import sys
 import gc
 import utime as time
 import ujson as json
@@ -99,7 +100,7 @@ def setup(request):
         cache.write(json.dumps(body))
         cache.close()
     
-    return '', 200
+    return '', 201
 
 @app.route('/static/<path:path>')
 def static(request, path):
@@ -116,4 +117,8 @@ def handle(request, direction):
 def runtime_error(request, exception):
     restart()
 
-start_server()
+if __name__ == '__main__':
+    try:
+        start_server()
+    except KeyboardInterrupt:
+        sys.exit(130)
