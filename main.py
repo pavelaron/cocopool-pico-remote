@@ -41,6 +41,8 @@ def connect_sta(ssid, password):
         status = wlan.ifconfig()
         print('ip = ' + status[0])
         
+    set_hostname()
+
 def init_ap():
     global wlan_connection
     wlan_connection = network.AP_IF
@@ -52,6 +54,12 @@ def init_ap():
     
     print('Access point active')
     print(ap.ifconfig())
+    
+    set_hostname()
+
+def set_hostname():
+    network.hostname('cocopool')
+    print('network hostname: ', network.hostname())
 
 def restart():
     gc.collect()
@@ -74,6 +82,7 @@ try:
     password = data['password']
     connect_sta(ssid, password)
 except Exception as error:
+    print(error)
     init_ap()
 
 gc.enable()
