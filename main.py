@@ -5,10 +5,12 @@ import utime as time
 import ujson as json
 import ubinascii as binascii
 from machine import Pin, Timer
-from microdot import Microdot, send_file
+from microdot import Microdot, Request, send_file
 
 cache_filename = 'cache.json'
 wlan_connection = network.STA_IF
+
+Request.socket_read_timeout = None
 
 buttons = {
     'up'   : Pin(18, Pin.OUT),
@@ -109,7 +111,7 @@ def setup(request):
         cache.write(json.dumps(body))
         cache.close()
     
-    return '', 201
+    return '', 200
 
 @app.route('/static/<path:path>')
 def static(request, path):
@@ -117,7 +119,7 @@ def static(request, path):
         return 'Not found', 404
     return send_file('static/' + path)
 
-@app.route('/button/<direction>', methods=['HEAD'])
+@app.route('/button/<direction>')
 def handle(request, direction):
     button_press(direction)
     return '', 200
@@ -131,3 +133,4 @@ if __name__ == '__main__':
         start_server()
     except KeyboardInterrupt:
         sys.exit(130)
+

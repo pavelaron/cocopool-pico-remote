@@ -6,7 +6,7 @@
       var name = e.currentTarget.name;
       var http = new XMLHttpRequest();
 
-      http.open('HEAD', '/button/' + name);
+      http.open('GET', '/button/' + name);
       http.send();
     });
   }
