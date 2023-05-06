@@ -12,13 +12,13 @@ jobs:
     container:
       image: ghcr.io/pavelaron/uf2-build:1.0
       volumes:
-        - ${{ github.workspace }}:/uf2-build
+        - ${{ github.workspace }}:/uf2-build/micropython
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
         run: |
-          cd /uf2-build/micropython/ports/rp2
+          cd ./ports/rp2
           make submodules
           make clean
           make
@@ -26,4 +26,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: UF2
-          path: /uf2-build/micropython/ports/rp2/build-PICO/firmware.uf2
+          path: ./ports/rp2/build-PICO/firmware.uf2
