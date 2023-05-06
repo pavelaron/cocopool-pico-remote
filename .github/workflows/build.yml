@@ -1,0 +1,29 @@
+name: Build uf2
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/pavelaron/uf2-build:1.0
+      volumes:
+        - ${{ github.workspace }}:/uf2-build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd /uf2-build/ports/rp2
+          make submodules
+          make clean
+          make
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: UF2
+          path: /uf2-build/ports/rp2/build-PICO/firmware.uf2
