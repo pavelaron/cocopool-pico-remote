@@ -17,8 +17,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
+        working-directory: ports/rp2
         run: |
-          cd /uf2-build/micropython/ports/rp2
           make submodules
           make clean
           make
@@ -26,4 +26,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: UF2
-          path:  /uf2-build/micropython/ports/rp2/build-PICO/firmware.uf2
+          path:  ports/rp2/build-PICO/firmware.uf2
