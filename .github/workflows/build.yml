@@ -27,5 +27,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: UF2
+          name: Firmware
           path: /uf2-build/micropython/ports/rp2/build-PICO/firmware.uf2
