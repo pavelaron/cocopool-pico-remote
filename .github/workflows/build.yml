@@ -21,7 +21,7 @@ jobs:
         run: |
           make submodules
           make clean
-          make
+          make -j 16 BOARD=PICO_W
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
