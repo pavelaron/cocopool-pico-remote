@@ -19,8 +19,8 @@ jobs:
       - name: Make
         working-directory: /uf2-build/micropython/ports/rp2
         run: |
-          make submodules
-          make clean
+          make BOARD=PICO_W submodules
+          make BOARD=PICO_W clean
           make -j 16 BOARD=PICO_W
       - name: Upload artifact
         uses: actions/upload-artifact@v3
