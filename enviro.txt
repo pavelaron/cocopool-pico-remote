@@ -1,4 +1,0 @@
-main.py
-index.html
-setup.html
-static/*

@@ -2,9 +2,7 @@ name: Build uf2
 
 on:
   push:
-    tags:
-      - '*'
-  workflow_dispatch:
+    branches: [ master ]
 
 jobs:
   build:
