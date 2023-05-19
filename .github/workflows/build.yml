@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          path: /uf2-build/micropython/ports/rp2/modules/
+          path: uf2-build/micropython/ports/rp2/modules/
       - name: Make
         working-directory: /uf2-build/micropython/ports/rp2
         run: |
