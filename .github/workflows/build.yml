@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          path: uf2-build/micropython/ports/rp2/modules/.
+      - name: Copy source
+        run: cp -a . /uf2-build/micropython/ports/rp2/modules/
       - name: Make
         working-directory: /uf2-build/micropython/ports/rp2
         run: |
