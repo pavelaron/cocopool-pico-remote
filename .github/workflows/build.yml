@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Minify
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm start
       - name: Copy dist
         run: cp -a dist/. /uf2-build/micropython/ports/rp2/modules/
