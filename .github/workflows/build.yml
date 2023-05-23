@@ -10,17 +10,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Minify
-        uses: creepinson/pnpm-action@master
+      - name: Install pnpm
+        uses: jjs98/pnpm-install-action@v6
         with:
-          arguments: '["install", "start"]'
+          directory: src/client
+      - name: Minify
+        run: pnpm start
       - id: build-uf2
         name: Build uf2
         uses: pavelaron/dir2uf2-action@v0.1.0
         with:
           environment-file: 'enviro.txt'
           file-name: 'cocopool'
-          src-dir: '.'
+          src-dir: 'dist'
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
