@@ -7,25 +7,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/pavelaron/uf2-build:1.1
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Minify
-        run: |
-          pnpm install --no-frozen-lockfile
-          pnpm start
-      - name: Copy dist
-        run: cp -a dist/. /uf2-build/micropython/ports/rp2/modules/
-      - name: Make
-        working-directory: /uf2-build/micropython/ports/rp2
-        run: |
-          make BOARD=PICO_W submodules
-          make BOARD=PICO_W clean
-          make -j 16 BOARD=PICO_W
-      - name: Upload artifact
+        uses: creepinson/pnpm-action@master
+        with:
+          arguments: '["install", "start"]'
+      - id: build-uf2
+        name: Build uf2
+        uses: pavelaron/dir2uf2-action@v0.1.0
+        with:
+          environment-file: 'enviro.txt'
+          file-name: 'cocopool'
+          src-dir: '.'
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Firmware
-          path: /uf2-build/micropython/ports/rp2/build-PICO_W/firmware.uf2
+          name: cocopool
+          path: ${{ steps.build-uf2.outputs.uf2-file }}
