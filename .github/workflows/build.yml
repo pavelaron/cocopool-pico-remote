@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: PNPM install
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       - name: Minify
         run: pnpm start
       - id: build-uf2
