@@ -7,20 +7,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+       image: ghcr.io/pavelaron/uf2-build:1.20
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install pnpm
-        uses: jjs98/pnpm-install-action@v6
+      - name: PNPM install
+        run: pnpm install
       - name: Minify
         run: pnpm start
       - id: build-uf2
         name: Build uf2
-        uses: pavelaron/dir2uf2-action@v0.1.0
-        with:
-          environment-file: 'enviro.txt'
-          file-name: 'cocopool'
-          src-dir: 'dist'
+        run: |
+          dir2uf2 --filename cocopool.uf2 dist
+          echo "uf2-file=cocopool.uf2" >> $GITHUB_OUTPUT
+          echo "bin-file=cocopool.bin" >> $GITHUB_OUTPUT
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
