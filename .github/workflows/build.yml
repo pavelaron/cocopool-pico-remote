@@ -16,14 +16,8 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Minify
         run: pnpm start
-      - id: build-uf2
-        name: Build uf2
-        run: |
-          dir2uf2 --filename cocopool.uf2 dist
-          echo "uf2-file=cocopool.uf2" >> $GITHUB_OUTPUT
-          echo "bin-file=cocopool.bin" >> $GITHUB_OUTPUT
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: cocopool
-          path: ${{ steps.build-uf2.outputs.uf2-file }}
+          path: ${{ github.workspace }}/dist/**/*
