@@ -31,15 +31,15 @@ task('minify-html', () => (
 ));
 
 task('mpy-cross', () => (
-  src('src/**/*.py')
+  src('src/lib/**/*.py')
     .pipe(obj((chunk, _enc, cb) => {
-      const filepath = chunk.path.split('src/').pop();
+      const filepath = chunk.path.split('src/lib/').pop();
       const output = filepath.substring(0, filepath.lastIndexOf('.'));
-      const outputPath = `dist/${output}.mpy`;
+      const outputPath = `dist/lib/${output}.mpy`;
 
       ensureDir(join(__dirname, 'dist/lib'))
         .then(() => {
-          spawn('mpy-cross', [`src/${filepath}`, '-o', outputPath])
+          spawn('mpy-cross', [`src/lib/${filepath}`, '-o', outputPath])
             .on('error', cb)
             .on('exit', (code) => {
               console.log('Out:', code, 'Created', outputPath);
@@ -60,9 +60,15 @@ task('copy-static', () => (
     .pipe(dest('dist/static'))
 ));
 
+task('copy-main', () => (
+  src(['src/main.py'])
+    .pipe(dest('dist'))
+));
+
 task('default', parallel(
   'copy-lib',
   'copy-static',
+  'copy-main',
   'mpy-cross',
   'minify-css',
   'minify-js',
