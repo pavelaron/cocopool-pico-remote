@@ -51,17 +51,17 @@ task('mpy-cross', () => (
 ));
 
 task('copy-lib', () => (
-  src(['src/lib/**/!(*.py)'])
+  src('src/lib/**/!(*.py)')
     .pipe(dest('dist/lib'))
 ));
 
 task('copy-static', () => (
-  src(['src/static/**/!(*.css|*.js)'])
+  src('src/static/**/!(*.css|*.js)')
     .pipe(dest('dist/static'))
 ));
 
 task('copy-main', () => (
-  src(['src/main.py'])
+  src('src/main.py')
     .pipe(dest('dist'))
 ));
 
