@@ -308,8 +308,9 @@ class Request():
 
     #: Specify a suggested read timeout to use when reading the request. Set to
     #: 0 to disable the use of a timeout. This timeout should be considered a
-    #: suggestion only, as some platforms may not support it.
-    socket_read_timeout = 0.1
+    #: suggestion only, as some platforms may not support it. The default is
+    #: 1 second.
+    socket_read_timeout = 1
 
     class G:
         pass
@@ -735,7 +736,7 @@ class URLPattern():
                 if type_ == 'string':
                     pattern = '[^/]+'
                 elif type_ == 'int':
-                    pattern = '\\d+'
+                    pattern = '-?\\d+'
                 elif type_ == 'path':
                     pattern = '.+'
                 elif type_.startswith('re:'):
@@ -1163,7 +1164,7 @@ class Microdot():
             req = Request.create(self, stream, addr, sock)
             res = self.dispatch_request(req)
         except socket_timeout_error as exc:  # pragma: no cover
-            if exc.errno and exc.errno not in [60, 110]:
+            if exc.errno and exc.errno != errno.ETIMEDOUT:
                 print_exception(exc)  # not a timeout
         except Exception as exc:  # pragma: no cover
             print_exception(exc)

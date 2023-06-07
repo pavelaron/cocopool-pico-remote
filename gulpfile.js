@@ -33,16 +33,16 @@ task('minify-html', () => (
 task('mpy-cross', () => (
   src('src/lib/**/*.py')
     .pipe(obj((chunk, _enc, cb) => {
-      const filepath = chunk.path.split('src/lib/').pop();
+      const filepath = chunk.path.split('src/').pop();
       const output = filepath.substring(0, filepath.lastIndexOf('.'));
-      const outputPath = `dist/lib/${output}.mpy`;
+      const outputPath = `dist/${output}.mpy`;
 
       ensureDir(join(__dirname, 'dist/lib'))
         .then(() => {
-          spawn('mpy-cross', [`src/lib/${filepath}`, '-o', outputPath])
+          spawn('mpy-cross', [`src/${filepath}`, '-o', outputPath])
             .on('error', cb)
             .on('exit', (code) => {
-              console.log('Out:', code, 'Created', outputPath);
+              console.log('Output:', code, 'Created', outputPath);
               cb(null, chunk);
             });
         })
