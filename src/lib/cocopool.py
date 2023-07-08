@@ -1,5 +1,6 @@
 import network
 import sys
+import errno
 import gc
 import utime as time
 import ujson as json
@@ -74,8 +75,10 @@ class Cocopool:
             ssid = data['ssid']
             password = data['password']
             self.__connect_sta(ssid, password)
-        except Exception as error:
-            print(error)
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+            
             self.__init_ap()
 
         gc.enable()
