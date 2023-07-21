@@ -5,21 +5,13 @@ import gc
 import utime as time
 import ujson as json
 import ubinascii as binascii
-from machine import Pin, Timer, unique_id
-from microdot import Microdot, Request, send_file
 
-app = Microdot()
+from machine import unique_id
+from http_handler import HttpHandler
+
 cache_filename = 'cache.json'
 
-buttons = {
-    'up'   : Pin(18, Pin.OUT),
-    'stop' : Pin(19, Pin.OUT),
-    'down' : Pin(20, Pin.OUT)
-}
-
 class Cocopool:
-    Request.socket_read_timeout = None
-
     def __init__(self):
         self.__start_server()
 
@@ -41,6 +33,8 @@ class Cocopool:
             print('connected')
             status = wlan.ifconfig()
             print('ip = ' + status[0])
+            handler = HttpHandler(status[0], cache_filename)
+            handler.listen()
             
         self.__set_hostname()
 
@@ -51,8 +45,13 @@ class Cocopool:
         ap.config(essid=ssid, password='123456789')
         ap.active(True)
         
+        status = ap.ifconfig()
+        
         print('Access point active')
-        print(ap.ifconfig())
+        print(status)
+        
+        handler = HttpHandler(status[0], cache_filename)
+        handler.listen()
         
         self.__set_hostname()
 
@@ -74,6 +73,7 @@ class Cocopool:
             
             ssid = data['ssid']
             password = data['password']
+            
             self.__connect_sta(ssid, password)
         except OSError as exc:
             if exc.errno != errno.ENOENT:
@@ -83,57 +83,4 @@ class Cocopool:
 
         gc.enable()
         gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
-
-        try:
-            app.run(host='0.0.0.0', port=80)
-        except KeyboardInterrupt:
-            sys.exit(130)
-        except:
-            self.__restart()
-
-    @app.get('/')
-    def index(request):
-        if network.WLAN().isconnected() == False:
-            return send_file('setup.html')
-        
-        return send_file('index.html')
-
-    @app.post('/save-ssid')
-    def setup(request):
-        body = request.json
-        keys = body.keys()
-        
-        if 'ssid' not in keys or 'password' not in keys:
-            return 'bad request', 400
-        
-        with open(cache_filename, 'w') as cache:
-            cache.write(json.dumps(body))
-            cache.close()
-        
-        return '', 200
-
-    @app.get('/static/<path:path>')
-    def static(request, path):
-        if '..' in path:
-            return 'Not found', 404
-        return send_file('static/' + path)
-
-    @app.get('/button/<direction>')
-    def handle(request, direction):
-        button = buttons[direction]
-        button.value(1)
-        timer = Timer(-1)
-        timer.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:button.value(0))
-        
-        return '', 200
-
-    @app.errorhandler(RuntimeError)
-    def runtime_error(request, exception):
         gc.collect()
-        app.shutdown()
-        time.sleep(5)
-        
-        try:
-            app.run(host='0.0.0.0', port=80)
-        except KeyboardInterrupt:
-            sys.exit(130)

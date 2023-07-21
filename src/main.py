@@ -1,4 +1,9 @@
 from cocopool import Cocopool
 
 if __name__ == '__main__':
-    Cocopool()
+    try:
+        Cocopool()
+    except KeyboardInterrupt:
+        pass
+    except:
+        raise
