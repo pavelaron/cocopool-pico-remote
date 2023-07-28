@@ -91,6 +91,8 @@ class HttpHandler:
             client.send('Content-Length: ' + str(os.stat(filename)[6]) + '\r\n\r\n')
             
             self.__send_file(filename, client)
+        elif re.search(r'/log', route):
+            self.__send_file('log.txt', client)
         else:
             client.send('HTTP/1.0 200 OK\r\n')
             client.send('Content-Type: text/html; charset=UTF-8\r\n\r\n')
