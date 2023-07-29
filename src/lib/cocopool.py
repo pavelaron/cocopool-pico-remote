@@ -8,6 +8,7 @@ import ubinascii as binascii
 
 from machine import unique_id
 from http_handler import HttpHandler
+from network import WLAN, AP_IF, STA_IF, hostname
 
 cache_filename = 'cache.json'
 
@@ -16,7 +17,7 @@ class Cocopool:
         self.__start_server()
 
     def __connect_sta(self, ssid, password):
-        wlan = network.WLAN(network.STA_IF)
+        wlan = WLAN(STA_IF)
         wlan.active(True)
         wlan.config(pm=0xa11140)
         wlan.connect(ssid, password)
@@ -41,7 +42,7 @@ class Cocopool:
     def __init_ap(self):
         ssid = 'Cocopool-' + binascii.hexlify(unique_id()).decode()
         
-        ap = network.WLAN(network.AP_IF)
+        ap = WLAN(AP_IF)
         ap.config(essid=ssid, password='123456789')
         ap.active(True)
         
@@ -56,8 +57,8 @@ class Cocopool:
         self.__set_hostname()
 
     def __set_hostname(self):
-        network.hostname('cocopool')
-        print('network hostname: ', network.hostname())
+        hostname('cocopool')
+        print('network hostname: ', hostname())
 
     def __restart(self):
         gc.collect()

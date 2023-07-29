@@ -4,7 +4,8 @@ import os
 import usocket as socket
 import ujson as json
 
-from machine import Pin, Timer
+from network import WLAN
+from machine import Pin, Timer, WDT
 
 types_map = {
     'css'  : 'text/css',
@@ -41,11 +42,19 @@ class HttpHandler:
         print('Listening for requests...')
         connection = self.__open_socket()
         
+        self.__wdt_init()
+        
         while True:
             client = connection.accept()[0]
             
             self.__router(client)
             client.close()
+            
+    def __wdt_init(self):
+        wdt = WDT(timeout=8000)
+        
+        wdt_timer = Timer(-1)
+        wdt_timer.init(mode=Timer.PERIODIC, freq=1000, callback=lambda t:wdt.feed())
             
     def __router(self, client):
         request = client.recv(1024)
@@ -100,7 +109,7 @@ class HttpHandler:
             
         
     def __root(self, client):
-        html_path = 'index' if network.WLAN().isconnected() else 'setup'
+        html_path = 'index' if WLAN().isconnected() else 'setup'
         self.__send_file(html_path + '.html', client)
             
     def __send_file(self, filename, client):
