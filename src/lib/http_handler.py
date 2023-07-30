@@ -1,6 +1,7 @@
 import network
 import re
 import os
+import errno
 import usocket as socket
 import ujson as json
 
