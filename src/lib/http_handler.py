@@ -113,12 +113,18 @@ class HttpHandler:
         self.__send_file(html_path + '.html', client)
             
     def __send_file(self, filename, client):
-        with open(filename, 'rb') as f:
-            while True:
-                data = f.read(1024)
-                if not data:
-                    break
-                client.sendall(data)
+        try:
+            with open(filename, 'rb') as f:
+                while True:
+                    data = f.read(1024)
+                    if not data:
+                        break
+                    client.sendall(data)
+                
+                f.close()
+                client.send('\r\n')
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
             
-            f.close()
-            client.send('\r\n')
+            client.send('HTTP/1.0 404 Not Found\r\n')
