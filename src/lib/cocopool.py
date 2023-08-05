@@ -1,6 +1,5 @@
 import network
 import sys
-import os
 import errno
 import gc
 import utime as time
@@ -68,9 +67,7 @@ class Cocopool:
         self.__start_server()
 
     def __start_server(self):
-        if cache_filename not in os.listdir():
-            self.__init_ap()
-        else:
+        try:
             with open(cache_filename, 'r') as cache:
                 data = json.load(cache)
                 cache.close()
@@ -79,6 +76,11 @@ class Cocopool:
                 password = data['password']
                 
                 self.__connect_sta(ssid, password)
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+
+            self.__init_ap()
 
         gc.enable()
         gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())

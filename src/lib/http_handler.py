@@ -29,7 +29,8 @@ class HttpHandler:
     def __init__(self, ip, cache_filename):
         self.__ip = ip
         self.__cache_filename = cache_filename
-    
+        self.__btn_timer = Timer(-1)
+
     def __open_socket(self):
         address = (self.__ip, 80)
         connection = socket.socket()
@@ -50,13 +51,13 @@ class HttpHandler:
             
             self.__router(client)
             client.close()
-            
+
     def __wdt_init(self):
         wdt = WDT(timeout=8000)
         
         wdt_timer = Timer(-1)
         wdt_timer.init(mode=Timer.PERIODIC, freq=1000, callback=lambda t:wdt.feed())
-            
+
     def __router(self, client):
         request = client.recv(1024)
         lines = request.splitlines()
@@ -84,8 +85,7 @@ class HttpHandler:
             direction = re.search('/button/(\S+)', route).group(1).decode('utf-8')
             button = buttons[direction]
             button.value(1)
-            timer = Timer(-1)
-            timer.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:button.value(0))
+            self.__btn_timer.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:button.value(0))
             
             client.send('HTTP/1.0 200 OK\r\n')
         elif re.search(r'/static/\S+', route):
@@ -109,12 +109,11 @@ class HttpHandler:
             client.send('HTTP/1.0 200 OK\r\n')
             client.send('Content-Type: text/html; charset=UTF-8\r\n\r\n')
             self.__root(client)
-            
-        
+
     def __root(self, client):
         html_path = 'index' if WLAN().isconnected() else 'setup'
         self.__send_file(html_path + '.html', client)
-            
+
     def __send_file(self, filename, client):
         try:
             with open(filename, 'rb') as f:
