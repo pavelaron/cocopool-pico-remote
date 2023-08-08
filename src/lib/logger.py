@@ -1,7 +1,7 @@
 import utime as time
+import uio as io
+import uos as os
 import sys
-import io
-import os
 
 class Logger:
     def __init__(self, error):
