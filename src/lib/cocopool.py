@@ -2,11 +2,11 @@ import network
 import sys
 import errno
 import gc
+import machine
 import utime as time
 import ujson as json
 import ubinascii as binascii
 
-from machine import unique_id
 from http_handler import HttpHandler
 from network import WLAN, AP_IF, STA_IF, hostname
 
@@ -23,24 +23,27 @@ class Cocopool:
         wlan.connect(ssid, password)
         
         for i in range(10):
-            if wlan.status() < 0 or wlan.status() >= 3:
+            status = wlan.status()
+
+            if status < network.STAT_IDLE or status >= network.STAT_GOT_IP:
                 break
             print('waiting for connection...')
             time.sleep(1)
         
-        if wlan.status() != 3:
-            self.__init_ap()
+        if status != network.STAT_GOT_IP:
+            machine.reset()
         else:
             print('connected')
-            status = wlan.ifconfig()
-            print('ip = ' + status[0])
-            handler = HttpHandler(status[0], cache_filename)
+            ifconfig = wlan.ifconfig()
+            print('ip = ' + ifconfig[0])
+            handler = HttpHandler(ifconfig[0], cache_filename)
             handler.listen()
             
         self.__set_hostname()
 
     def __init_ap(self):
-        ssid = 'Cocopool-' + binascii.hexlify(unique_id()).decode()
+        uid = machine.unique_id()
+        ssid = 'Cocopool-' + binascii.hexlify(uid).decode()
         
         ap = WLAN(AP_IF)
         ap.config(essid=ssid, password='123456789')
