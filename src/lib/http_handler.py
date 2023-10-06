@@ -18,6 +18,12 @@ types_map = {
     'txt'  : 'text/plain',
 }
 
+http = {
+    'ok'            : 'HTTP/1.0 200 OK\r\n',
+    'bad_request'   : 'HTTP/1.0 400 Bad request\r\n',
+    'not_found'     : 'HTTP/1.0 404 Not Found\r\n',
+}
+
 buttons = {
     'up'   : Pin(18, Pin.OUT),
     'stop' : Pin(19, Pin.OUT),
@@ -68,7 +74,7 @@ class HttpHandler:
         lines = request.splitlines()
         
         if not lines:
-            client.send('HTTP/1.0 400 Bad request\r\n')
+            client.send(http['bad_request'])
             return
         
         route = lines[0]
@@ -78,14 +84,14 @@ class HttpHandler:
             keys = body.keys()
             
             if 'ssid' not in keys or 'password' not in keys:
-                client.send('HTTP/1.0 400 Bad request\r\n')
+                client.send(http['bad_request'])
                 return
             
             with open(self.__cache_filename, 'w') as cache:
                 cache.write(json.dumps(body))
                 cache.close()
             
-            client.send('HTTP/1.0 200 OK\r\n')
+            client.send(self.http_ok)
         elif re.search('/button/\S+', route):
             direction = re.search('/button/(\S+)', route).group(1).decode('utf-8')
             button = buttons[direction]
@@ -93,9 +99,9 @@ class HttpHandler:
             self.__btn_timer.init(period=1000, mode=Timer.ONE_SHOT, \
                 callback=lambda t:button.value(0))
             
-            client.send('HTTP/1.0 200 OK\r\n')
+            client.send(http['ok'])
         elif re.search(r'/static/\S+', route):
-            client.send('HTTP/1.0 200 OK\r\n')
+            client.send(http['ok'])
             path = re.search(r'static/\w+\.?\S*', route)
             filename = path.group(0).decode('utf-8')
             
@@ -112,7 +118,7 @@ class HttpHandler:
         elif re.search(r'/log-backup', route):
             self.__send_file('log-backup.txt', client)
         else:
-            client.send('HTTP/1.0 200 OK\r\n')
+            client.send(http['ok'])
             client.send('Content-Type: text/html; charset=UTF-8\r\n\r\n')
             self.__root(client)
 
@@ -135,4 +141,4 @@ class HttpHandler:
             if exc.errno != errno.ENOENT:
                 raise
             
-            client.send('HTTP/1.0 404 Not Found\r\n')
+            client.send(http['not_found'])

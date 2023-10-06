@@ -63,12 +63,6 @@ class Cocopool:
         hostname('cocopool')
         print('network hostname: ', hostname())
 
-    def __restart(self):
-        gc.collect()
-        app.shutdown()
-        time.sleep(5)
-        self.__start_server()
-
     def __start_server(self):
         try:
             with open(cache_filename, 'r') as cache:
