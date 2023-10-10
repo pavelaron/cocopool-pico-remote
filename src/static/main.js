@@ -1,12 +1,12 @@
 (function() {
-  var buttons = document.getElementsByClassName('button');
+  const buttons = document.getElementsByClassName('button');
 
-  for (var i = 0; i < buttons.length; ++i) {
-    buttons[i].addEventListener('click', function(e) {
-      var name = e.currentTarget.name;
-      var http = new XMLHttpRequest();
+  for (const button of buttons) {
+    button.addEventListener('click', function(e) {
+      const name = e.currentTarget.name;
+      const http = new XMLHttpRequest();
 
-      http.open('GET', '/button/' + name);
+      http.open('GET', `/button/${name}`);
       http.send();
     });
   }

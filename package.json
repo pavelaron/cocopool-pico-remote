@@ -20,8 +20,13 @@
   },
   "homepage": "https://github.com/pavelaron/cocopool-pico-remote#readme",
   "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/register": "^7.22.15",
     "fs-extra": "^11.1.1",
     "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-uglify": "^3.0.2"

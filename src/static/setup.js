@@ -1,18 +1,18 @@
 (function() {
-  var form = document.getElementById('form-setup');
-  var btnSubmit = document.getElementById('btn-submit');
-  var message = document.getElementById('message');
+  const form = document.getElementById('form-setup');
+  const btnSubmit = document.getElementById('btn-submit');
+  const message = document.getElementById('message');
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     btnSubmit.classList.add(hiddenClass);
 
-    var hiddenClass = 'setup-hidden';
-    var http = new XMLHttpRequest();
+    const hiddenClass = 'setup-hidden';
+    const http = new XMLHttpRequest();
 
     http.open('POST', '/save-ssid', true);
     http.setRequestHeader('Content-Type', 'application/json');
-    http.onload = function(progress) {
+    http.onload = function() {
       message.innerText = http.status === 200
         ? 'SSID has been saved! Please reboot your device for changes to take effect.'
         : 'Connection error! Please try again.';
@@ -23,7 +23,7 @@
       form.reset();
     };
 
-    var data = JSON.stringify({
+    const data = JSON.stringify({
       ssid: form.ssid.value,
       password: form.password.value,
     });

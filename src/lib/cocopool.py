@@ -22,7 +22,7 @@ class Cocopool:
         wlan.config(pm=0xa11140)
         wlan.connect(ssid, password)
         
-        for i in range(10):
+        for _ in range(10):
             status = wlan.status()
 
             if status < network.STAT_IDLE or status >= network.STAT_GOT_IP:
