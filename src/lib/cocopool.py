@@ -3,6 +3,7 @@ import sys
 import errno
 import gc
 import machine
+import uos as os
 import utime as time
 import ujson as json
 import ubinascii as binascii
@@ -64,7 +65,7 @@ class Cocopool:
         print('network hostname: ', hostname())
 
     def __start_server(self):
-        try:
+        if cache_filename in os.listdir():
             with open(cache_filename, 'r') as cache:
                 data = json.load(cache)
                 cache.close()
@@ -73,10 +74,7 @@ class Cocopool:
                 password = data['password']
                 
                 self.__connect_sta(ssid, password)
-        except OSError as exc:
-            if exc.errno != errno.ENOENT:
-                raise
-
+        else:
             self.__init_ap()
 
         gc.enable()
