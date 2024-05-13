@@ -5,10 +5,11 @@
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    btnSubmit.classList.add(hiddenClass);
 
     const hiddenClass = 'setup-hidden';
     const http = new XMLHttpRequest();
+
+    btnSubmit.classList.add(hiddenClass);
 
     http.open('POST', '/save-ssid', true);
     http.setRequestHeader('Content-Type', 'application/json');
