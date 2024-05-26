@@ -12,13 +12,20 @@ jobs:
        image: ghcr.io/pavelaron/uf2-build:1.20.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Compile Micropython
+        run: ./build_rpi_pico_w.sh ${{ vars.MICROPYTHON_VERSION }}
+      - name: Upload uf2 atrifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "micropython-cocopool"
+          path: ${{ github.workspace }}/micropython/ports/rp2/build-RPI_PICO_W/**/*
       - name: PNPM install
         run: pnpm install --no-frozen-lockfile
       - name: Minify
         run: pnpm start
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cocopool
           path: ${{ github.workspace }}/dist/**/*

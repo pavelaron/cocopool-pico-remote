@@ -9,7 +9,7 @@ import ujson as json
 import ubinascii as binascii
 
 from http_handler import HttpHandler
-from network import WLAN, AP_IF, STA_IF, hostname
+from network import WLAN, AP_IF, STA_IF
 
 cache_filename = 'cache.json'
 
@@ -39,8 +39,6 @@ class Cocopool:
             print('ip = ' + ifconfig[0])
             handler = HttpHandler(ifconfig[0], cache_filename)
             handler.listen()
-            
-        self.__set_hostname()
 
     def __init_ap(self):
         uid = machine.unique_id()
@@ -57,12 +55,6 @@ class Cocopool:
         
         handler = HttpHandler(status[0], cache_filename)
         handler.listen()
-        
-        self.__set_hostname()
-
-    def __set_hostname(self):
-        hostname('cocopool')
-        print('network hostname: ', hostname())
 
     def __start_server(self):
         if cache_filename in os.listdir():
