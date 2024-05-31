@@ -34,6 +34,7 @@ class HttpHandler:
     def __init__(self, ip, cache_filename):
         self.__ip = ip
         self.__connection = socket.socket()
+
         self.__cache_filename = cache_filename
         self.__btn_timer = Timer(-1)
 
@@ -41,11 +42,11 @@ class HttpHandler:
         address = (self.__ip, 80)
         self.__connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__connection.bind(address)
-        self.__connection.listen(1)
+        self.__connection.listen(5)
 
     def listen(self):
         print('Listening for requests...')
-
+        
         self.__open_socket()
         self.__wdt_init()
         
@@ -56,17 +57,18 @@ class HttpHandler:
             client.close()
 
     def __wdt_init(self):
-        wdt = WDT(timeout=8000)
+        wdt = WDT(timeout=5000)
         wdt.feed()
         
         wdt_timer = Timer(-1)
-        wdt_timer.init(mode=Timer.PERIODIC, freq=1000, \
+        wdt_timer.init(period=2000, \
             callback=lambda t:self.__check_connection(wdt))
 
     def __check_connection(self, wdt):
-        if 'state=1' not in str(self.__connection):
+        connection = str(self.__connection).lower()
+        if 'state=-' in connection or 'state=0' in connection:
             return
-
+        
         wdt.feed()
 
     def __router(self, client):

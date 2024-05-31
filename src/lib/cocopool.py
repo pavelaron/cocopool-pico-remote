@@ -42,7 +42,7 @@ class Cocopool:
 
     def __init_ap(self):
         uid = machine.unique_id()
-        ssid = 'Cocopool-' + binascii.hexlify(uid).decode()
+        ssid = 'Cocopool-' + binascii.hexlify(uid).decode()[-4:].upper()
         
         ap = WLAN(AP_IF)
         ap.config(essid=ssid, password='123456789')

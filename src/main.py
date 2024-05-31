@@ -7,7 +7,7 @@ if __name__ == '__main__':
     try:
         Cocopool()
     except KeyboardInterrupt:
-        pass
+        print('Process terminated by user...')
     except Exception as error:
         Logger(error)
         machine.reset()
