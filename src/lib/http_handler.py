@@ -30,6 +30,12 @@ buttons = {
     'down' : Pin(20, Pin.OUT),
 }
 
+invalid_states = [
+    'state=-',
+    'state=0',
+    'state=4',
+]
+
 class HttpHandler:
     def __init__(self, ip, cache_filename):
         self.__ip = ip
@@ -66,9 +72,10 @@ class HttpHandler:
 
     def __check_connection(self, wdt):
         connection = str(self.__connection).lower()
-        if 'state=-' in connection or 'state=0' in connection:
-            return
-        
+        for state in invalid_states:
+            if state in connection:
+                return
+
         wdt.feed()
 
     def __router(self, client):
