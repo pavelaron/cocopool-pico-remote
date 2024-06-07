@@ -36,6 +36,12 @@ div, p {
   font-weight: 600;
   margin: 20px;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 .button:active {
